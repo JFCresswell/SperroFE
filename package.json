@@ -3,6 +3,12 @@
   "version": "1.0.0",
   "description": "Sperro universal front end for web and mobile",
   "scripts": {
+      "prestart": "babel-node buildScripts/startMessage.js",
+      "start": "npm-run-all --parallel security-check open:src",
+      "open:src": "babel-node buildscripts/srcServer.js",
+      "security-check": "nsp check",
+      "localtunnel": "lt --port 3000",
+      "share": "npm-run-all --parallel open:src localtunnel"
   },
   "author": "John Cresswell",
   "license": "MIT",
