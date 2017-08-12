@@ -2,6 +2,7 @@ import path from 'path';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import WebpackMd5Hash from 'webpack-md5-hash';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 export default {
   debug: true,
@@ -18,12 +19,16 @@ export default {
     filename: '[name].[chunkhash].js'
   },
   plugins: [
-      new WebpackMd5Hash(),
+  // Generate an external css file with a hash in the filename
+    new ExtractTextPlugin('[name].[contenthash].css'),
 
-      new webpack.optimize.CommonsChunkPlugin({
+    new WebpackMd5Hash(),
+
+    new webpack.optimize.CommonsChunkPlugin({
         name: 'vendor'
-      }),
-      new HtmlWebpackPlugin({
+    }),
+
+    new HtmlWebpackPlugin({
         template: 'src/index.html',
         minify: {
             removeComments: true,
@@ -37,16 +42,17 @@ export default {
             minifyCSS: true,
             minifyURLs: true
         },
-        inject: true
-      }),
+        inject: true,
+        trackJSToken: 'be86f370dcc646d394021b9e81203bf4'
+    }),
 
-      new webpack.optimize.DedupePlugin(),
-      new webpack.optimize.UglifyJsPlugin()
+    new webpack.optimize.DedupePlugin(),
+    new webpack.optimize.UglifyJsPlugin()
   ],
   module: {
     loaders: [
       {test: /\.js$/, exclude: /node_modules/, loaders: ['babel']},
-      {test: /\.css$/, loaders: ['style','css']}
+      {test: /\.css$/, loader: ExtractTextPlugin.extract('css?sourceMap')}
     ]
   }
 }
